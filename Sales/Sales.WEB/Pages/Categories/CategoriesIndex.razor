@@ -1,0 +1,41 @@
+﻿@page "/categories"
+@inject IRepository repository
+
+<h3>Categorías</h3>
+
+<GenericList MyList="categories">
+    <Body>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Categorías</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var category in categories!)
+                {
+                    <tr>
+                        <td>
+                            <a class="btn btn-warning">Editar</a>
+                            <button class="btn btn-danger">Borrar</button>
+                        </td>
+                        <td>
+                            @category.Name
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </Body>
+</GenericList>
+
+@code {
+    public List<Category>? categories { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        var responseHttp = await repository.GetAsync<List<Category>>("/api/categories");
+        categories = responseHttp.Response;
+    }
+}
