@@ -62,7 +62,7 @@ else
 
     private async Task LoadAsync()
     {
-        var responseHttp = await repository.GetAsync<Country>($"/api/countries/{Id}");
+        var responseHttp = await repository.GetAllAsync<Country>($"/api/countries/{Id}");
         if (responseHttp.Error)
         {
             if (responseHttp.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)

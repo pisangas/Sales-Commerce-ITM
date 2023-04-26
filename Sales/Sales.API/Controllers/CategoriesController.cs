@@ -16,8 +16,16 @@ namespace Sales.API.Controllers
             _context = context;
         }
 
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetAsync(int id)
+        {
+            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            if (category is null) { return NotFound(); }
+            return Ok(category);
+        }
+
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
             return Ok(await _context.Categories.ToListAsync());
         }
@@ -28,6 +36,27 @@ namespace Sales.API.Controllers
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
             return Ok(category);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Put(Category category)
+        {
+            _context.Categories.Update(category);
+            await _context.SaveChangesAsync();
+            return Ok(category);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            if (category is null)
+            {
+                return NotFound();
+            }
+            _context.Remove(category);
+            await _context.SaveChangesAsync();
+            return NoContent();
         }
     }
 }

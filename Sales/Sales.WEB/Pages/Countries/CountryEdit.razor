@@ -23,7 +23,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var responseHTTP = await repository.GetAsync<Country>($"api/countries/{Id}");
+        var responseHTTP = await repository.GetAllAsync<Country>($"api/countries/{Id}");
 
         if (responseHTTP.Error)
         {

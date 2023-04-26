@@ -47,7 +47,7 @@
 
     private async Task LoadAsync()
     {
-        var httpResponse = await repository.GetAsync<List<Country>>("/api/countries");
+        var httpResponse = await repository.GetAllAsync<List<Country>>("/api/countries");
         if (httpResponse.Error)
         {
             var message = await httpResponse.GetErrorMessageAsync();

@@ -17,7 +17,7 @@ namespace Sales.WEB.Repositories
             _httpClient = httpClient;
         }
 
-        public async Task<HttpResponseWrapper<T>> GetAsync<T>(string url)
+        public async Task<HttpResponseWrapper<T>> GetAllAsync<T>(string url)
         {
             var responseHttp = await _httpClient.GetAsync(url);
             if (responseHttp.IsSuccessStatusCode)
