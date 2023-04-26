@@ -46,7 +46,7 @@ namespace Sales.API.Controllers
             return Ok(category);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);

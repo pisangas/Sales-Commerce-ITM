@@ -18,14 +18,13 @@
         {
             await sweetAlertService.FireAsync("Error", await responseHttp.GetErrorMessageAsync(), SweetAlertIcon.Error);
             return;
-        }
-        categoryForm!.FormPostedSuccessfully = true;
+        }        
         Return();
 
         var toast = sweetAlertService.Mixin(new SweetAlertOptions
             {
                 Toast = true,
-                Position = SweetAlertPosition.TopEnd,
+                Position = SweetAlertPosition.Center,
                 ShowConfirmButton = false,
                 Timer = 5000
             });
@@ -35,6 +34,7 @@
 
     private void Return()
     {
+        categoryForm!.FormPostedSuccessfully = true;
         navigationManager.NavigateTo("/categories");
     }
 

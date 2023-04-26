@@ -1,0 +1,66 @@
+﻿@page "/categories/edit/{Id:int}"
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+@inject NavigationManager navigationManager
+
+<h3>Editar Categoría</h3>
+
+@if (category is null)
+{
+    <p>Cargando...</p>
+}
+else
+{
+    <CategoryForm @ref="categoryForm" category="category" OnValidSubmit="EditAsync" ReturnAction="Return" />
+}
+
+@code {
+    private Category? category;
+    private CategoryForm? categoryForm;
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var responseHttp = await repository.GetAllAsync<Category>($"/api/categories/{Id}");
+
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("/categories");
+                return;
+            }
+            var messageError = await responseHttp.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", messageError, SweetAlertIcon.Error);
+            return;
+        }
+        category = responseHttp.Response;
+    }
+
+    private async Task EditAsync()
+    {
+        var responseHttp = await repository.PutAsync("/api/categories", category);
+        if (responseHttp.Error)
+        {
+            await sweetAlertService.FireAsync("Error", await responseHttp.GetErrorMessageAsync(), SweetAlertIcon.Error);
+            return;
+        }        
+        Return();
+        var toast = sweetAlertService.Mixin(new SweetAlertOptions
+            {
+                Toast = true,                
+                Position = SweetAlertPosition.Center,
+                ShowConfirmButton = false,
+                Timer = 5000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Categoría modificado con éxito.");
+    }
+
+    private void Return()
+    {
+        categoryForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo("categories");
+    }
+
+}
