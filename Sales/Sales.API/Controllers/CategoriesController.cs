@@ -33,17 +33,49 @@ namespace Sales.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(Category category)
         {
-            _context.Categories.Add(category);
-            await _context.SaveChangesAsync();
-            return Ok(category);
+            try
+            {
+                _context.Categories.Add(category);
+                await _context.SaveChangesAsync();
+                return Ok(category);
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException!.Message.Contains("duplicate"))
+                {
+                    return BadRequest("Ya existe esta categoría");
+                }
+                return BadRequest(ex.Message);
+                
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPut]
         public async Task<IActionResult> Put(Category category)
         {
-            _context.Categories.Update(category);
-            await _context.SaveChangesAsync();
-            return Ok(category);
+            try
+            {
+                _context.Categories.Update(category);
+                await _context.SaveChangesAsync();
+                return Ok(category);
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException!.Message.Contains("duplicate"))
+                {
+                    return BadRequest("Ya existe esta categoría");
+                }
+                return BadRequest(ex.Message);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }           
         }
 
         [HttpDelete("{id}")]
