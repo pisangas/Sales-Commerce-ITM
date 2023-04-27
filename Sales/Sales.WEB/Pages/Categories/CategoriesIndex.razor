@@ -3,7 +3,7 @@
 @inject SweetAlertService sweetAlertService
 @inject NavigationManager navigationManager
 
-<h3>Categorías</h3>
+<h3 >Categorías</h3>
 <a class="btn btn-primary mb-3" href="/categories/create">Nueva Categoría</a>
 
 
@@ -12,8 +12,8 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th></th>
                     <th>Categorías</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -21,12 +21,12 @@
                 {
                     <tr>
                         <td>
-                            <a class="btn btn-warning" href="/categories/edit/@category.Id">Editar</a>
-                            <button class="btn btn-danger" @onclick="@(() => DeleteAsync(category.Id))">Borrar</button>
-                        </td>
-                        <td>
                             @category.Name
                         </td>
+                        <td>
+                            <a class="btn btn-warning" href="/categories/edit/@category.Id">Editar</a>
+                            <button class="btn btn-danger" @onclick="@(() => DeleteAsync(category.Id))">Borrar</button>
+                        </td>                        
                     </tr>
                 }
             </tbody>
