@@ -17,8 +17,8 @@
             <thead>
                 <tr>
                     <th>País</th>
-                    <th>Estados/Departamentos</th>
-                    <th>Acciones</th>
+                    <th style="width:220px">Estados/Departamentos</th>
+                    <th style="width:260px">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -56,7 +56,7 @@
         string url2 = $"api/countries/totalPages";
         var httpResponse = await repository.GetAllAsync<List<Country>>(url1);
         var httpResponse2 = await repository.GetAllAsync<int>(url2);
-        if (httpResponse.Error || httpResponse2.Error)
+        if (httpResponse.Error)
         {
             var message = await httpResponse.GetErrorMessageAsync();
             await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
