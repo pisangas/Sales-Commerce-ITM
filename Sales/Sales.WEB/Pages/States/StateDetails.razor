@@ -15,23 +15,26 @@ else
         <a class="btn btn-success" href="/countries/details/@state.CountryId">Regresar</a>
     </div>
 
-    <GenericList MyList="state.Cities!.ToList()">
+    <Pagination CurrentPage="currentPage" TotalPages="totalPages" SelectedPage="SelectedPageAsync" />
+
+
+    <GenericList MyList="cities">
         <Body>
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Ciudad</th>                        
-                        <th></th>
+                        <th>Ciudad</th>
+                        <th style="width:180px"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var city in state.Cities!.ToList())
+                    @foreach (var city in cities!)
                     {
                         <tr>
                             <td>
                                 @city.Name
-                            </td>                            
-                            <td>                                
+                            </td>
+                            <td>
                                 <a class="btn btn-warning" href="/cities/edit/@city.Id">Editar</a>
                                 <button class="btn btn-danger" @onclick=@(() => DeleteAsync(city.Id))>Borrar</button>
                             </td>
@@ -44,7 +47,11 @@ else
 }
 
 @code {
-    private State? state;    
+    private State? state;
+    private List<City>? cities;
+    private int currentPage = 1;
+    private int totalPages;
+
 
     [Parameter]
     public int StateId { get; set; }
@@ -54,9 +61,19 @@ else
         await LoadAsync();
     }
 
-    private async Task LoadAsync()
+    private async Task LoadAsync(int page = 1)
     {
-        var responseHttp = await repository.GetAllAsync<State>($"/api/states/{StateId}");
+
+        string url1 = $"api/cities?id={StateId}&page={page}";
+        string url2 = $"api/cities/totalPages?id={StateId}";
+        var responseHttp = await repository.GetAllAsync<State>($"api/states/{StateId}");
+        var responseHttp2 = await repository.GetAllAsync<List<City>>(url1);
+        var responseHttp3 = await repository.GetAllAsync<int>(url2);
+
+        state = responseHttp.Response;
+        cities = responseHttp2.Response;
+        totalPages = responseHttp3.Response;
+
         if (responseHttp.Error)
         {
             if (responseHttp.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
@@ -64,13 +81,17 @@ else
                 navigationManager.NavigateTo("/countries");
                 return;
             }
-
             var message = await responseHttp.GetErrorMessageAsync();
             await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
             return;
-        }
 
-        state = responseHttp.Response;        
+        }                
+    }
+
+    private async Task SelectedPageAsync(int page)
+    {
+        currentPage = page;
+        await LoadAsync(page);
     }
 
     private async Task DeleteAsync(int cityId)
