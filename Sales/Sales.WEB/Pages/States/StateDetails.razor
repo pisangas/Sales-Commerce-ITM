@@ -9,11 +9,21 @@
 }
 else
 {
-    <h3>@state.Name</h3>
-    <div class="mb-2">
-        <a class="btn btn-primary" href="/cities/create/@StateId">Nuevo Ciudad</a>
-        <a class="btn btn-success" href="/countries/details/@state.CountryId">Regresar</a>
+    <div class="mb-2" style="display: flex; flex-wrap:wrap; align-items: center;">
+        <div>
+            <a class="btn btn-primary" href="/cities/create/@StateId">Nueva Ciudad</a>
+            <a class="btn btn-success" href="/countries/details/@state.CountryId">Regresar</a>
+        </div>
+        <div class="mx-2">
+            <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar ciudad..."
+               @bind-value="Filter" />
+        </div>
+        <div>
+            <button type="button" class="btn btn-outline-primary" @onclick="ApplyFilterAsync">Filtrar</button>
+            <button type="button" class="btn btn-outline-danger" @onclick="CleanFilterAsync">Limpiar</button>
+        </div>
     </div>
+
 
     <Pagination CurrentPage="currentPage" TotalPages="totalPages" SelectedPage="SelectedPageAsync" />
 
@@ -56,6 +66,15 @@ else
     [Parameter]
     public int StateId { get; set; }
 
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string Page { get; set; } = string.Empty;
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string Filter { get; set; } = string.Empty;
+
+
     protected override async Task OnInitializedAsync()
     {
         await LoadAsync();
@@ -64,8 +83,24 @@ else
     private async Task LoadAsync(int page = 1)
     {
 
-        string url1 = $"api/cities?id={StateId}&page={page}";
-        string url2 = $"api/cities/totalPages?id={StateId}";
+
+        if (!string.IsNullOrWhiteSpace(Page))
+        {
+            page = Convert.ToInt32(Page);
+        }
+        string url1 = string.Empty;
+        string url2 = string.Empty;
+        if (string.IsNullOrEmpty(Filter))
+        {
+            url1 = $"api/cities?id={StateId}&page={page}";
+            url2 = $"api/cities/totalPages?id={StateId}";
+        }
+        else
+        {
+            url1 = $"api/cities?id={StateId}&page={page}&filter={Filter}";
+            url2 = $"api/cities/totalPages?id={StateId}&filter={Filter}";
+        }
+        
         var responseHttp = await repository.GetAllAsync<State>($"api/states/{StateId}");
         var responseHttp2 = await repository.GetAllAsync<List<City>>(url1);
         var responseHttp3 = await repository.GetAllAsync<int>(url2);
@@ -87,6 +122,20 @@ else
 
         }                
     }
+
+    private async Task CleanFilterAsync()
+    {
+        Filter = string.Empty;
+        await ApplyFilterAsync();
+    }
+    private async Task ApplyFilterAsync()
+    {
+        int page = 1;
+        await LoadAsync(page);
+        await SelectedPageAsync(page);
+    }
+
+
 
     private async Task SelectedPageAsync(int page)
     {
