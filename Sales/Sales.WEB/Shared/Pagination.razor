@@ -18,16 +18,12 @@
     public int TotalPages { get; set; }
 
     [Parameter] 
-    public int Radio { get; set; } = 10;
+    public int Radio { get; set; } = 9;
 
     [Parameter] 
     public EventCallback<int> SelectedPage { get; set; }    
-
-    private bool linkNextEnable;
-    private int linkNextPage;
+       
     List<PageModel> Links = new();
-
-
 
     class PageModel
     {
@@ -62,17 +58,8 @@
             }
         }
 
-        if (CurrentPage == TotalPages)
-        {
-            linkNextEnable = false;
-            linkNextPage = CurrentPage;
-        }
-        else
-        {
-            linkNextEnable = CurrentPage != TotalPages;
-            linkNextPage = CurrentPage + 1;            
-        }
-
+        var linkNextEnable = CurrentPage == TotalPages ? false : true;
+        var linkNextPage = CurrentPage == TotalPages ? CurrentPage : CurrentPage + 1;
         
         Links.Add(new PageModel
             {
