@@ -1,15 +1,15 @@
-﻿<nav>
-    <ul class="pagination">
-        @foreach (var link in Links)
-        {
-            <li @onclick=@(() => InternalSelectedPage(link)) style="cursor: pointer" class="page-item @(link.Enable ? null : "disabled") @(link.Enable ? "active" : null)">
-                <a class="page-link">@link.Text</a>
-            </li>
-        }
-    </ul>
-</nav>
-
-
+﻿<div class="d-flex justify-content-center">
+    <nav>
+        <ul class="pagination">
+            @foreach (var link in Links)
+            {
+                <li @onclick=@(() => InternalSelectedPage(link)) style="cursor: pointer" class="page-item @(link.Enable ? null : "disabled") @(link.Enable ? "active" : null)">
+                    <a class="page-link">@link.Text</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
 @code {
     [Parameter] public int CurrentPage { get; set; } = 1;
     [Parameter] public int TotalPages { get; set; }
