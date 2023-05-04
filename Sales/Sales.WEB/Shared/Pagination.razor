@@ -11,12 +11,22 @@
     </nav>
 </div>
 @code {
-    [Parameter] public int CurrentPage { get; set; } = 1;
-    [Parameter] public int TotalPages { get; set; }
-    [Parameter] public int Radio { get; set; } = 5;
-    [Parameter] public EventCallback<int> SelectedPage { get; set; }
+    [Parameter] 
+    public int CurrentPage { get; set; } = 1;
 
+    [Parameter] 
+    public int TotalPages { get; set; }
+
+    [Parameter] 
+    public int Radio { get; set; } = 10;
+
+    [Parameter] 
+    public EventCallback<int> SelectedPage { get; set; }    
+
+    private bool linkNextEnable;
+    private int linkNextPage;
     List<PageModel> Links = new();
+
 
 
     class PageModel
@@ -52,8 +62,18 @@
             }
         }
 
-        var linkNextEnable = CurrentPage != TotalPages;
-        var linkNextPage = CurrentPage + 1;
+        if (CurrentPage == TotalPages)
+        {
+            linkNextEnable = false;
+            linkNextPage = CurrentPage;
+        }
+        else
+        {
+            linkNextEnable = CurrentPage != TotalPages;
+            linkNextPage = CurrentPage + 1;            
+        }
+
+        
         Links.Add(new PageModel
             {
                 Text = "Siguiente",
