@@ -10,19 +10,20 @@
         </ul>
     </nav>
 </div>
+
 @code {
-    [Parameter] 
+    [Parameter]
     public int CurrentPage { get; set; } = 1;
 
-    [Parameter] 
+    [Parameter]
     public int TotalPages { get; set; }
 
-    [Parameter] 
-    public int Radio { get; set; } = 9;
+    [Parameter]
+    public int Radio { get; set; } = 10;
 
-    [Parameter] 
-    public EventCallback<int> SelectedPage { get; set; }    
-       
+    [Parameter]
+    public EventCallback<int> SelectedPage { get; set; }
+
     List<PageModel> Links = new();
 
     class PageModel
@@ -47,7 +48,25 @@
 
         for (int i = 1; i <= TotalPages; i++)
         {
-            if (i >= CurrentPage - Radio && i <= CurrentPage + Radio)
+            if (TotalPages <= Radio)
+            {
+                Links.Add(new PageModel
+                    {
+                        Page = i,
+                        Enable = CurrentPage == i,
+                        Text = $"{i}"
+                    });
+            }
+            if (TotalPages > Radio && i <= Radio && CurrentPage <= Radio)
+            {
+                Links.Add(new PageModel
+                    {
+                        Page = i,
+                        Enable = CurrentPage == i,
+                        Text = $"{i}"
+                    });
+            }
+            if (CurrentPage > Radio && i > CurrentPage - Radio && i <= CurrentPage)
             {
                 Links.Add(new PageModel
                     {
@@ -60,7 +79,7 @@
 
         var linkNextEnable = CurrentPage == TotalPages ? false : true;
         var linkNextPage = CurrentPage == TotalPages ? CurrentPage : CurrentPage + 1;
-        
+
         Links.Add(new PageModel
             {
                 Text = "Siguiente",
