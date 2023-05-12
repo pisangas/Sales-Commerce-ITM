@@ -1,5 +1,4 @@
 ﻿@page "/countries"
-@using Microsoft.AspNetCore.Authorization;
 @inject IRepository repository
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
@@ -90,19 +89,23 @@
             url2 = $"api/countries/totalPages?filter={Filter}";
         }
 
-
-        var httpResponse = await repository.GetAllAsync<List<Country>>(url1);
-        var httpResponse2 = await repository.GetAllAsync<int>(url2);
-
-        if (httpResponse.Error)
+        try
         {
-            var message = await httpResponse.GetErrorMessageAsync();
-            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
-            return;
+            var httpResponse = await repository.GetAllAsync<List<Country>>(url1);
+            var httpResponse2 = await repository.GetAllAsync<int>(url2);
+            if (httpResponse.Error)
+            {
+                var message = await httpResponse.GetErrorMessageAsync();
+                await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+                return;
+            }
+            countries = httpResponse.Response!;
+            totalPages = httpResponse2.Response!;
         }
-        countries = httpResponse.Response!;
-        totalPages = httpResponse2.Response!;
-
+        catch (Exception ex)
+        {
+            await sweetAlertService.FireAsync("Error", ex.Message, SweetAlertIcon.Error);
+        }
     }
 
     private async Task CleanFilterAsync()
